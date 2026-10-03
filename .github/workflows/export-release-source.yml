@@ -1,0 +1,30 @@
+name: Prepare SF19plus source asset
+
+on:
+  push:
+    branches:
+      - prep/sf19plus-experience-backupbook-2026-10-03
+    paths:
+      - .github/workflows/export-release-source.yml
+
+permissions:
+  contents: read
+
+jobs:
+  fetch-source:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download approved 2026-09-25 source asset
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 --retry-delay 2 \
+            -o Stockfish19plus_Source_2026-09-25.zip \
+            https://github.com/hpoiters/Stockfish19plus/releases/download/v19plus-2026-09-25/Stockfish19plus_Source_2026-09-25.zip
+          echo "66c4600177e72ecd9fbae5e6805e3eaaf2671d80126e95221f56263295b39a5d  Stockfish19plus_Source_2026-09-25.zip" | sha256sum -c -
+      - name: Upload exact source archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: Stockfish19plus_Source_2026-09-25_exact
+          path: Stockfish19plus_Source_2026-09-25.zip
+          compression-level: 0
+          retention-days: 1
