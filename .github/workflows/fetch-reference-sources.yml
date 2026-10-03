@@ -1,0 +1,33 @@
+name: Fetch reference engine sources
+
+on:
+  push:
+    branches:
+      - prep/sf19plus-experience-backupbook-2026-10-03
+    paths:
+      - .github/workflows/fetch-reference-sources.yml
+
+permissions:
+  contents: read
+
+jobs:
+  fetch-references:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download pinned reference sources
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 -o BrainLearn.zip https://github.com/amchess/BrainLearn/archive/c9fe18fc4fd164e4faa3844075935380871a754f.zip
+          curl -fL --retry 3 -o Polyfish.zip https://github.com/khalid-a-omar/Polyfish/archive/e18d043fe030475b1023109b9d0435f3448385ce.zip
+          curl -fL --retry 3 -o ShashChess.zip https://github.com/amchess/ShashChess/archive/0ed14e1b72f602253e9fdc3e157609de2aea3fc4.zip
+          sha256sum BrainLearn.zip Polyfish.zip ShashChess.zip
+      - name: Upload references
+        uses: actions/upload-artifact@v4
+        with:
+          name: sf19plus-reference-sources
+          path: |
+            BrainLearn.zip
+            Polyfish.zip
+            ShashChess.zip
+          compression-level: 0
+          retention-days: 1
